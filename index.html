@@ -140,6 +140,7 @@
     marker.setPopupContent(popupContent);
   }
 
+  // Flohmarktmarker
   const markers = [];
   flohmarktStaende.forEach(stand => {
     var marker = L.marker([stand.lat, stand.lon], {icon: standIcon}).addTo(map);
@@ -149,7 +150,7 @@
       <a href="#" onclick="openNavigation(${stand.lat}, ${stand.lon}); return false;">Navigation</a>
     `;
     marker.bindPopup(popupContent, {
-      autoPan: true,             // Innerhalb der Karte halten
+      autoPan: true,
       autoPanPadding: [20, 20],
       maxWidth: 200,
       closeButton: true
@@ -162,6 +163,7 @@
     window.open(url, '_blank');
   };
 
+  // Nutzerstandort einmalig setzen (bleibt ruhig)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
       userLat = pos.coords.latitude;
@@ -174,15 +176,16 @@
         opacity: 1,
         fillOpacity: 0.8,
         className: 'user-location'
-      }).addTo(map).bindPopup("Dein Standort");
+      }).addTo(map).bindPopup("Dein Standort", { autoPan: false });
 
+      // Popups der Flohmarktstände aktualisieren
       markers.forEach(({marker, stand}) => {
         updatePopupContent(marker, stand);
       });
     }, function(error) {
-        console.error("Fehler bei der Ermittlung des Standorts: ", error);
-        userLat = null;
-        userLon = null;
+      console.error("Fehler bei der Ermittlung des Standorts: ", error);
+      userLat = null;
+      userLon = null;
     });
   }
 </script>
