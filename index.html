@@ -70,7 +70,6 @@
     100% { transform: scale(1); opacity: 0.7; }
   }
   
-  /* Ladebildschirm-Stile */
   #loader-container {
     position: fixed;
     top: 0;
@@ -110,69 +109,63 @@
 <div id="map"></div>
 
 <script>
-  // Karte erstellen
   var map = L.map('map', { minZoom: 15, maxZoom: 19 }).setView([47.6889638, 7.5597250], 17);
 
-  // Satellitenkarte (Esri)
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics',
     maxZoom: 19
   }).addTo(map);
 
-  // Begrenzung auf Welmlingen
   var bounds = [ [47.685, 7.555], [47.693, 7.565] ];
   map.setMaxBounds(bounds);
   map.on('drag', function() { map.panInsideBounds(bounds, { animate: false }); });
 
-  // Flohmarktstände
   const flohmarktStaende = [
     { name: "Stand 1", lat: 47.687232516989525, lon: 7.56274141683508 },
-    { name: "Stand 2", lat: 47.68740858996556, lon: 7.562884953430143 },
-    { name: "Stand 3", lat: 47.68753957069542, lon: 7.563282071329412 },
+    { name: "Stand 2", lat: 47.68740858996556, lon: 7.562884953430143, angebote: "Essen, Getränke" },
+    { name: "Stand 3", lat: 47.68753957069542, lon: 7.563282071329412, angebote: "Getränke" },
     { name: "Stand 4", lat: 47.6885315780178, lon: 7.564227817982364 },
     { name: "Stand 5", lat: 47.68879675426234, lon: 7.56445747651825 },
-    { name: "Stand 6", lat: 47.689049046205334, lon: 7.5640922556479095 },
+    { name: "Stand 6", lat: 47.689049046205334, lon: 7.5640922556479095, angebote: "Muffins" },
     { name: "Stand 7", lat: 47.689543964298295, lon: 7.563902468378466 },
     { name: "Stand 8", lat: 47.68999743750097, lon: 7.564322840233039 },
     { name: "Stand 9", lat: 47.690600029769755, lon: 7.563596439298487 },
     { name: "Stand 10", lat: 47.690528536136775, lon: 7.563186771936006 },
     { name: "Stand 11", lat: 47.69045704240589, lon: 7.562972455221885 },
-    { name: "Stand 12", lat: 47.689871045447056, lon: 7.562337091466102 },
-    { name: "Stand 13", lat: 47.68962336719094, lon: 7.562181569597246 },
+    { name: "Stand 12", lat: 47.689871045447056, lon: 7.562337091466102, angebote: "Waffeln" },
+    { name: "Stand 13", lat: 47.68962336719094, lon: 7.562181569597246, angebote: "Heiße Wienerle, Brot, Getränke" },
     { name: "Stand 14", lat: 47.68964890108566, lon: 7.561826903884498 },
     { name: "Stand 15", lat: 47.689442076176285, lon: 7.561684658259563 },
-    { name: "Stand 16", lat: 47.689518678089264, lon: 7.561487411018248 },
+    { name: "Stand 16", lat: 47.689518678089264, lon: 7.561487411018248, angebote: "Muffins, Kuchen, Lemon Soda" },
     { name: "Stand 17", lat: 47.689703798914984, lon: 7.561157401183945 },
     { name: "Stand 18", lat: 47.68986593868411, lon: 7.5610758470360935 },
-    { name: "Stand 19", lat: 47.69053747284116, lon: 7.5613925805926545 },
+    { name: "Stand 19", lat: 47.69053747284116, lon: 7.5613925805926545, angebote: "Fleischkäsweckle, Getränke" },
     { name: "Stand 20", lat: 47.68927993508624, lon: 7.56100187931135 },
     { name: "Stand 21", lat: 47.68938590136543, lon: 7.560797045637678 },
     { name: "Stand 22", lat: 47.690515769407966, lon: 7.560127542928903 },
     { name: "Stand 23", lat: 47.6901034023297, lon: 7.560279271582139 },
     { name: "Stand 24", lat: 47.689595279898136, lon: 7.5602792715822345 },
-    { name: "Stand 25", lat: 47.68897863219566, lon: 7.560302030889679 },
+    { name: "Stand 25", lat: 47.68897863219566, lon: 7.560302030889679, angebote: "Crepes" },
     { name: "Stand 26", lat: 47.688840747238835, lon: 7.560651006801142 },
-    { name: "Stand 27", lat: 47.68866839053225, lon: 7.5623010559153006 },
-    { name: "Stand 28", lat: 47.688998904933705, lon: 7.559792455295854 },
-    { name: "Stand 29", lat: 47.6882558542198, lon: 7.559919528052522 },
+    { name: "Stand 27", lat: 47.68866839053225, lon: 7.5623010559153006, angebote: "Chessiwürscht" },
+    { name: "Stand 28", lat: 47.688998904933705, lon: 7.559792455295854, angebote: "Muffins, Kuchen, Burger, Getränke" },
+    { name: "Stand 29", lat: 47.6882558542198, lon: 7.559919528052522, angebote: "Getränke" },
     { name: "Stand 30", lat: 47.68957012580439, lon: 7.559248257131524 },
-    { name: "Stand 31", lat: 47.690268474043485, lon: 7.55922739443301 },
-    { name: "Stand 32", lat: 47.6884427907243, lon: 7.558851866006704 },
-    { name: "Stand 33", lat: 47.687866985033146, lon: 7.559280499444849 },
+    { name: "Stand 31", lat: 47.690268474043485, lon: 7.55922739443301, angebote: "Kuchen, Getränke" },
+    { name: "Stand 32", lat: 47.6884427907243, lon: 7.558851866006704, angebote: "Waffeln, Muffins, Kaffee" },
+    { name: "Stand 33", lat: 47.687866985033146, lon: 7.559280499444849, angebote: "Candy- & Popcorn-Bar, Getränke" },
     { name: "Stand 34", lat: 47.687866985033146, lon: 7.559665510887031 },
     { name: "Stand 35", lat: 47.68721442541648, lon: 7.559150071212494 },
     { name: "Stand 36", lat: 47.68719272059367, lon: 7.559542669087033 },
     { name: "Stand 37", lat: 47.68700376057824, lon: 7.559373870967063 }
   ];
 
-  // Zusätzliche Orte (WC, Parkplätze)
   const weitereOrte = [
     { name: "Öffentliches WC", lat: 47.690140426128096, lon: 7.562046910425782, type: "wc" },
     { name: "Öffentliches WC", lat: 47.68835671567877, lon: 7.56009401599938, type: "wc" },
     { name: "Parkplätze (an der Halle)", lat: 47.6883541622266, lon: 7.56017936336341, type: "park" }
   ];
 
-  // Marker Icons
   var standIcon = L.icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
     iconSize: [32,32],
@@ -192,7 +185,6 @@
     popupAnchor: [0,-32]
   });
 
-  // Dynamische Standortverfolgung
   let userMarker = null;
 
   function createPopupContent(item, userLat, userLon) {
@@ -202,6 +194,9 @@
     }
     
     let content = `<b>${item.name}</b><br>`;
+    if(item.angebote){
+      content += `<i>${item.angebote}</i><br>`;
+    }
     content += `<a href="${navigationUrl}" target="_blank">Navigation</a>`;
     return content;
   }
@@ -245,7 +240,6 @@
     });
   }
 
-  // Flohmarktmarker erstellen
   flohmarktStaende.forEach(stand => {
     var marker = L.marker([stand.lat, stand.lon], {icon: standIcon, itemData: stand}).addTo(map);
     marker.bindPopup(createPopupContent(stand), {
@@ -256,7 +250,6 @@
     });
   });
 
-  // Marker für zusätzliche Orte
   weitereOrte.forEach(ort => {
     let icon = ort.type === "wc" ? wcIcon : parkIcon;
     var marker = L.marker([ort.lat, ort.lon], {icon: icon, itemData: ort}).addTo(map);
@@ -268,7 +261,6 @@
     });
   });
 
-  // Ladebildschirm ausblenden, sobald die Karte geladen ist
   window.addEventListener('load', function() {
     const loaderContainer = document.getElementById('loader-container');
     loaderContainer.style.opacity = '0';
