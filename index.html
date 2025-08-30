@@ -27,6 +27,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255,255,255,0.85);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     padding: 10px 25px;
     border-radius: 16px;
@@ -37,12 +38,66 @@
     z-index: 1000;
     pointer-events: none;
   }
+  .designer {
+    position: absolute;
+    top: 65px; /* Abstand unter dem Titel */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.7);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    padding: 5px 15px;
+    border-radius: 12px;
+    font-size: 14px; /* Etwas größer als der Disclaimer, aber kleiner als der Titel */
+    font-weight: 600;
+    color: #444;
+    z-index: 999; /* Z-Index etwas niedriger als der Titel */
+    pointer-events: none;
+  }
+  .gps-status {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.9);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+  .gps-status.show {
+    opacity: 1;
+  }
+  .gps-status.good {
+    color: #28a745;
+    border: 2px solid #28a745;
+  }
+  .gps-status.medium {
+    color: #ffc107;
+    border: 2px solid #ffc107;
+  }
+  .gps-status.poor {
+    color: #dc3545;
+    border: 2px solid #dc3545;
+  }
+  .gps-status.searching {
+    color: #007bff;
+    border: 2px solid #007bff;
+  }
   .leaflet-popup-content-wrapper {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     font-size: 14px;
     padding: 12px;
     background: #ffffffcc;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
   }
   .leaflet-popup-content b {
@@ -96,6 +151,19 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  .disclaimer {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    color: #666;
+    font-size: 10px;
+    text-align: center;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
 </style>
 </head>
 <body>
@@ -106,7 +174,11 @@
 </div>
 
 <div class="title">2. Dorfflohmarkt Welmlingen</div>
+<div class="designer">Designt von Finn Wasmer</div>
 <div id="map"></div>
+<div class="disclaimer">
+  Alle Angaben ohne Gewähr.
+</div>
 
 <script>
   var map = L.map('map', { minZoom: 15, maxZoom: 19 }).setView([47.6889638, 7.5597250], 17);
@@ -121,43 +193,47 @@
   map.on('drag', function() { map.panInsideBounds(bounds, { animate: false }); });
 
   const flohmarktStaende = [
-    { name: "Stand 1", lat: 47.687232516989525, lon: 7.56274141683508 },
-    { name: "Stand 2", lat: 47.68740858996556, lon: 7.562884953430143, angebote: "Essen, Getränke" },
-    { name: "Stand 3", lat: 47.68753957069542, lon: 7.563282071329412, angebote: "Getränke" },
-    { name: "Stand 4", lat: 47.6885315780178, lon: 7.564227817982364 },
-    { name: "Stand 5", lat: 47.68879675426234, lon: 7.56445747651825 },
-    { name: "Stand 6", lat: 47.689049046205334, lon: 7.5640922556479095, angebote: "Muffins" },
-    { name: "Stand 7", lat: 47.689543964298295, lon: 7.563902468378466 },
-    { name: "Stand 8", lat: 47.68999743750097, lon: 7.564322840233039 },
-    { name: "Stand 9", lat: 47.690600029769755, lon: 7.563596439298487 },
-    { name: "Stand 10", lat: 47.690528536136775, lon: 7.563186771936006 },
-    { name: "Stand 11", lat: 47.69045704240589, lon: 7.562972455221885 },
-    { name: "Stand 12", lat: 47.689871045447056, lon: 7.562337091466102, angebote: "Waffeln" },
-    { name: "Stand 13", lat: 47.68962336719094, lon: 7.562181569597246, angebote: "Heiße Wienerle, Brot, Getränke" },
-    { name: "Stand 14", lat: 47.68964890108566, lon: 7.561826903884498 },
-    { name: "Stand 15", lat: 47.689442076176285, lon: 7.561684658259563 },
-    { name: "Stand 16", lat: 47.689518678089264, lon: 7.561487411018248, angebote: "Muffins, Kuchen, Lemon Soda" },
-    { name: "Stand 17", lat: 47.689703798914984, lon: 7.561157401183945 },
-    { name: "Stand 18", lat: 47.68986593868411, lon: 7.5610758470360935 },
-    { name: "Stand 19", lat: 47.69053747284116, lon: 7.5613925805926545, angebote: "Fleischkäsweckle, Getränke" },
-    { name: "Stand 20", lat: 47.68927993508624, lon: 7.56100187931135 },
-    { name: "Stand 21", lat: 47.68938590136543, lon: 7.560797045637678 },
-    { name: "Stand 22", lat: 47.690515769407966, lon: 7.560127542928903 },
-    { name: "Stand 23", lat: 47.6901034023297, lon: 7.560279271582139 },
-    { name: "Stand 24", lat: 47.689595279898136, lon: 7.5602792715822345 },
-    { name: "Stand 25", lat: 47.68897863219566, lon: 7.560302030889679, angebote: "Crepes" },
-    { name: "Stand 26", lat: 47.688840747238835, lon: 7.560651006801142 },
-    { name: "Stand 27", lat: 47.68866839053225, lon: 7.5623010559153006, angebote: "Chessiwürscht" },
-    { name: "Stand 28", lat: 47.688998904933705, lon: 7.559792455295854, angebote: "Muffins, Kuchen, Burger, Getränke" },
-    { name: "Stand 29", lat: 47.6882558542198, lon: 7.559919528052522, angebote: "Getränke" },
-    { name: "Stand 30", lat: 47.68957012580439, lon: 7.559248257131524 },
-    { name: "Stand 31", lat: 47.690268474043485, lon: 7.55922739443301, angebote: "Kuchen, Getränke" },
-    { name: "Stand 32", lat: 47.6884427907243, lon: 7.558851866006704, angebote: "Waffeln, Muffins, Kaffee" },
-    { name: "Stand 33", lat: 47.687866985033146, lon: 7.559280499444849, angebote: "Candy- & Popcorn-Bar, Getränke" },
-    { name: "Stand 34", lat: 47.687866985033146, lon: 7.559665510887031 },
-    { name: "Stand 35", lat: 47.68721442541648, lon: 7.559150071212494 },
-    { name: "Stand 36", lat: 47.68719272059367, lon: 7.559542669087033 },
-    { name: "Stand 37", lat: 47.68700376057824, lon: 7.559373870967063 }
+    { name: "Alte Landstr. 15", lat: 47.69016049471992, lon: 7.5602437855215285 },
+    { name: "Alte Landstr. 2", lat: 47.690584900440555, lon: 7.563209032117878 },
+    { name: "Alte Landstr. 22", lat: 47.68963153755825, lon: 7.560292329856701 },
+    { name: "Alte Landstr. 25", lat: 47.68888343129214, lon: 7.560640429911487 },
+    { name: "Alte Landstr. 25", lat: 47.68905673633853, lon: 7.560673955657406 },
+    { name: "Alte Landstr. 26", lat: 47.68904288591298, lon: 7.56030647389067, angebote: "Crepes" },
+    { name: "Alte Landstr. 31", lat: 47.68804710991083, lon: 7.56104655496364 },
+    { name: "Alte Landstr. 4", lat: 47.69047514159541, lon: 7.56295518044662 },
+    { name: "Alte Landstr. 7", lat: 47.6905144540375, lon: 7.5613861348776235, angebote: "Fleischkäsweckle" },
+    { name: "Am Kirchberg 1", lat: 47.69021554676332, lon: 7.558932837535221, angebote: "Kuchen" },
+    { name: "Blauenblick 19", lat: 47.68790295429244, lon: 7.559274398522493, angebote: "Candy- & Popcorn-Bar" },
+    { name: "Blauenblick 38", lat: 47.6884420588935, lon: 7.558760973255757, angebote: "Muffins, Waffeln, Kaffee" },
+    { name: "Blauenblick 4/2", lat: 47.68899138024774, lon: 7.559793625768729, angebote: "Burger, Muffins, Kuchen" },
+    { name: "Blauenblick 5", lat: 47.68958298970196, lon: 7.559257477261469 },
+    { name: "Brunnenplatz", lat: 47.69058429978339, lon: 7.560808460388324 },
+    { name: "Freiburger Str. 15", lat: 47.688623672114566, lon: 7.56223727158822, angebote: "Cheesiwürscht" },
+    { name: "Haselstr. 11", lat: 47.68869969977951, lon: 7.56432864030446 },
+    { name: "Haselstr. 12", lat: 47.689105118843926, lon: 7.563821264767716, angebote: "Muffins" },
+    { name: "Haselstr. 13", lat: 47.68857414472033, lon: 7.5642535908868265 },
+    { name: "Haselstr. 22", lat: 47.68758675226322, lon: 7.5636028169938525 },
+    { name: "Haselstr. 3/2", lat: 47.68999087465498, lon: 7.564345296277844 },
+    { name: "Haselstr. 8", lat: 47.68940061814368, lon: 7.563928771055918 },
+    { name: "Holzenweg 1", lat: 47.690601109872645, lon: 7.563604998868822 },
+    { name: "Im Rumpel 1", lat: 47.689685309466704, lon: 7.561132379476176 },
+    { name: "Im Rumpel 2", lat: 47.68987943584509, lon: 7.561082694133152 },
+    { name: "Mühlenweg 1", lat: 47.68756672139115, lon: 7.563299394784566 },
+    { name: "Mühlenweg 3", lat: 47.68738663815421, lon: 7.5628911805957735 },
+    { name: "Ob der Schule 3", lat: 47.687870885771, lon: 7.559653505769753 },
+    { name: "Riedstr. 2", lat: 47.69048219508826, lon: 7.5600925708940325 },
+    { name: "Schulstr. 11", lat: 47.687204571058594, lon: 7.559543025108278, angebote: "Cookies, Popcorn, Zuckerwatte" },
+    { name: "Schulstr. 16", lat: 47.687258427047, lon: 7.559163482061499, angebote: "Würste, Brot" },
+    { name: "Schulstr. 17", lat: 47.687469641473, lon: 7.559224302334477, angebote: "Kuchen, Kaffee" },
+    { name: "Schulstr. 4", lat: 47.68839595817998, lon: 7.559833571399013 },
+    { name: "Steingasse 11", lat: 47.68949560136009, lon: 7.561472791550699, angebote: "Muffins, Kuchen, Lemon Soda" },
+    { name: "Steingasse 17", lat: 47.689305108822005, lon: 7.561012664270406 },
+    { name: "Steingasse 19", lat: 47.689405779671915, lon: 7.5607919300290565 },
+    { name: "Steingasse 4", lat: 47.68983790133549, lon: 7.562357144724403, angebote: "Waffeln" },
+    { name: "Steingasse 5", lat: 47.689637161162494, lon: 7.562132341017336, angebote: "Heiße Wienerle" },
+    { name: "Steingasse 7", lat: 47.68969425270056, lon: 7.561840582061536 },
+    { name: "Steingasse 9", lat: 47.68948503632561, lon: 7.5616450464603995 },
+    { name: "Walter-Wetzel-Str. 3/1", lat: 47.6874183119286, lon: 7.562865796637019, angebote: "Essen" }
   ];
 
   const weitereOrte = [
@@ -173,19 +249,23 @@
     popupAnchor: [0,-32]
   });
   var wcIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2873/2873837.png',
-    iconSize: [32,32],
-    iconAnchor: [16,32],
-    popupAnchor: [0,-32]
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2183/2183556.png',
+    iconSize: [48,48],
+    iconAnchor: [24,48],
+    popupAnchor: [0,-48]
   });
   var parkIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/10323/10323386.png',
-    iconSize: [32,32],
-    iconAnchor: [16,32],
-    popupAnchor: [0,-32]
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/3680/3680366.png',
+    iconSize: [48,48],
+    iconAnchor: [24,48],
+    popupAnchor: [0,-48]
   });
 
   let userMarker = null;
+  let lastUserPosition = null;
+  let locationUpdateInterval = null;
+  let positionHistory = [];
+  let isLocationStabilized = false;
 
   function createPopupContent(item, userLat, userLon) {
     let navigationUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lon}`;
@@ -210,36 +290,144 @@
     });
   }
 
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(function(pos) {
-      const userLat = pos.coords.latitude;
-      const userLon = pos.coords.longitude;
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3;
+    const φ1 = lat1 * Math.PI/180;
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
 
-      if (userMarker) {
-        userMarker.setLatLng([userLat, userLon]);
-      } else {
-        userMarker = L.circleMarker([userLat, userLon], {
-          radius: 9,
-          fillColor: "#007bff",
-          color: "#ffffff",
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.8,
-          className: 'user-location'
-        }).addTo(map).bindPopup("Dein Standort", { autoPan: false });
-      }
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-      updatePopups(userLat, userLon);
-
-    }, function(error) {
-      console.error("Fehler bei der Standortverfolgung: ", error);
-    }, {
-      enableHighAccuracy: true,
-      maximumAge: 10000,
-      timeout: 5000
-    });
+    return R * c;
   }
 
+  // Gleitender Durchschnitt für stabilere Position
+  function getSmoothedPosition(newLat, newLon) {
+    positionHistory.push({ lat: newLat, lon: newLon, timestamp: Date.now() });
+    
+    // Nur letzte 5 Positionen behalten
+    if (positionHistory.length > 5) {
+      positionHistory.shift();
+    }
+    
+    // Durchschnitt berechnen
+    let avgLat = 0, avgLon = 0;
+    positionHistory.forEach(pos => {
+      avgLat += pos.lat;
+      avgLon += pos.lon;
+    });
+    
+    return {
+      lat: avgLat / positionHistory.length,
+      lon: avgLon / positionHistory.length
+    };
+  }
+
+  function updateUserLocation(position) {
+    const rawLat = position.coords.latitude;
+    const rawLon = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+
+    // Sehr strenge Genauigkeitsfilterung
+    if (accuracy > 30) {
+      console.log("GPS-Genauigkeit zu niedrig:", accuracy + "m");
+      return;
+    }
+
+    // Geglättete Position verwenden
+    const smoothed = getSmoothedPosition(rawLat, rawLon);
+    const userLat = smoothed.lat;
+    const userLon = smoothed.lon;
+
+    // Nach ersten paar Messungen: Sehr hohe Schwelle für Updates
+    if (lastUserPosition && isLocationStabilized) {
+      const distance = calculateDistance(
+        lastUserPosition.lat, lastUserPosition.lon,
+        userLat, userLon
+      );
+      
+      // Nur bei Bewegung > 15 Meter aktualisieren wenn bereits stabilisiert
+      if (distance < 15) {
+        return;
+      }
+    }
+
+    // Bei ersten 3 Messungen: niedrigere Schwelle
+    if (lastUserPosition && positionHistory.length <= 3) {
+      const distance = calculateDistance(
+        lastUserPosition.lat, lastUserPosition.lon,
+        userLat, userLon
+      );
+      
+      if (distance < 8) {
+        return;
+      }
+    }
+
+    // Position als stabilisiert markieren nach 3 Updates
+    if (positionHistory.length >= 3) {
+      isLocationStabilized = true;
+    }
+
+    lastUserPosition = { lat: userLat, lon: userLon };
+
+    if (userMarker) {
+      userMarker.setLatLng([userLat, userLon]);
+    } else {
+      userMarker = L.circleMarker([userLat, userLon], {
+        radius: 10,
+        fillColor: "#007bff",
+        color: "#ffffff",
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 0.8,
+        className: 'user-location'
+      }).addTo(map).bindPopup("Dein Standort", { autoPan: false });
+    }
+
+    updatePopups(userLat, userLon);
+  }
+
+  function startLocationTracking() {
+    if (!navigator.geolocation) {
+      console.error("Geolocation wird nicht unterstützt");
+      return;
+    }
+
+    // Erste Position mit hoher Genauigkeit
+    navigator.geolocation.getCurrentPosition(
+      updateUserLocation,
+      function(error) {
+        console.error("Fehler beim Abrufen der Position:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
+    );
+
+    // Sehr seltene Updates nur alle 15 Sekunden
+    locationUpdateInterval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        updateUserLocation,
+        function(error) {
+          console.error("Fehler beim Aktualisieren der Position:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 8000,
+          maximumAge: 60000 // 1 Minute alte Position OK
+        }
+      );
+    }, 15000); // 15 Sekunden Intervall
+  }
+
+  // Marker für Flohmarktstände hinzufügen
   flohmarktStaende.forEach(stand => {
     var marker = L.marker([stand.lat, stand.lon], {icon: standIcon, itemData: stand}).addTo(map);
     marker.bindPopup(createPopupContent(stand), {
@@ -250,6 +438,7 @@
     });
   });
 
+  // Marker für weitere Orte hinzufügen
   weitereOrte.forEach(ort => {
     let icon = ort.type === "wc" ? wcIcon : parkIcon;
     var marker = L.marker([ort.lat, ort.lon], {icon: icon, itemData: ort}).addTo(map);
@@ -261,6 +450,10 @@
     });
   });
 
+  // Standortverfolgung starten
+  startLocationTracking();
+
+  // Loader ausblenden wenn Seite geladen ist
   window.addEventListener('load', function() {
     const loaderContainer = document.getElementById('loader-container');
     loaderContainer.style.opacity = '0';
@@ -268,6 +461,14 @@
       loaderContainer.style.display = 'none';
     }, 500);
   });
+
+  // Aufräumen wenn Seite verlassen wird
+  window.addEventListener('beforeunload', function() {
+    if (locationUpdateInterval) {
+      clearInterval(locationUpdateInterval);
+    }
+  });
 </script>
+
 </body>
 </html>
