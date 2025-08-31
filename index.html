@@ -43,15 +43,15 @@
     top: 65px; /* Abstand unter dem Titel */
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.4); /* Weniger Deckkraft */
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
-    padding: 5px 15px;
-    border-radius: 12px;
-    font-size: 14px; /* Etwas größer als der Disclaimer, aber kleiner als der Titel */
-    font-weight: 600;
-    color: #444;
-    z-index: 999; /* Z-Index etwas niedriger als der Titel */
+    padding: 3px 10px; /* Kleineres Padding */
+    border-radius: 10px; /* Etwas kleinerer Radius */
+    font-size: 12px; /* Kleinere Schriftgröße */
+    font-weight: 500; /* Weniger fetter Text */
+    color: #888; /* Hellerer Text */
+    z-index: 999;
     pointer-events: none;
   }
   .gps-status {
@@ -233,7 +233,7 @@
     { name: "Steingasse 5", lat: 47.689637161162494, lon: 7.562132341017336, angebote: "Heiße Wienerle" },
     { name: "Steingasse 7", lat: 47.68969425270056, lon: 7.561840582061536 },
     { name: "Steingasse 9", lat: 47.68948503632561, lon: 7.5616450464603995 },
-    { name: "Walter-Wetzel-Str. 3/1", lat: 47.6874183119286, lon: 7.562865796637019, angebote: "Essen" }
+    { name: "Walter-Wetzel-Str. 3/1", lat: 47.68722910142015, lon: 7.562750087123431, angebote: "Essen" }
   ];
 
   const weitereOrte = [
@@ -248,6 +248,15 @@
     iconAnchor: [16,32],
     popupAnchor: [0,-32]
   });
+  
+  // Icon für Essen/Trinken
+  var foodIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/5193/5193679.png',
+    iconSize: [40,40],
+    iconAnchor: [20,40],
+    popupAnchor: [0,-40]
+  });
+
   var wcIcon = L.icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/2183/2183556.png',
     iconSize: [48,48],
@@ -429,7 +438,10 @@
 
   // Marker für Flohmarktstände hinzufügen
   flohmarktStaende.forEach(stand => {
-    var marker = L.marker([stand.lat, stand.lon], {icon: standIcon, itemData: stand}).addTo(map);
+    // Prüfen, ob der Stand Angebote hat, die auf Essen oder Trinken hindeuten
+    let iconToUse = stand.angebote ? foodIcon : standIcon;
+    
+    var marker = L.marker([stand.lat, stand.lon], {icon: iconToUse, itemData: stand}).addTo(map);
     marker.bindPopup(createPopupContent(stand), {
       autoPan: true,
       autoPanPadding: [20, 20],
